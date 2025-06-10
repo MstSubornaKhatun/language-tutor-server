@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 3000;
 require('dotenv').config()
 
@@ -14,6 +14,7 @@ app.use(express.json());
 
 // language-tutor-admin
 // gZf2HaCbnB4A7qpE
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.honlggm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -29,31 +30,30 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-      const tutorCollection = client.db('languageTutor').collection('tutors')
+   
+
+    const tutorsCollection = client.db('languageTutor').collection('tutors')
 
 
-    // tutors
     app.get('/tutors', async (req, res) => {
-      const cursor = tutorCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
+            const result = await tutorsCollection.find().toArray();
+            res.send(result);
+        });
+
+            app.get('/tutors/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await tutorsCollection.findOne(query);
+      res.send(result)
     });
 
-    // app.get('/jobs/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) }
-    //   const result = await tutorCollection.findOne(query);
-    //   res.send(result)
-    // });
 
-
-
-
-
-
-
-
+            app.post('/tutors', async (req, res) => {
+            const newTutor = req.body;
+            console.log(newTutor);
+            const result = await tutorsCollection.insertOne(newTutor);
+            res.send(result);
+        })
 
 
     // Send a ping to confirm a successful connection
@@ -61,11 +61,10 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
-
 
 
 app.get('/', (req, res) => {
