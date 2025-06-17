@@ -87,6 +87,8 @@ async function run() {
       //   return res.status(403).send({message: 'Forbidden Access'})
       // }
       
+
+      
       const query = {};
       if (email) {
         query.email = email;
