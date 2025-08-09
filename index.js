@@ -66,15 +66,12 @@ const verifyTokenEmail = (req, res, next) => {
 }
 
 
-
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
 
     const tutorsCollection = client.db('languageTutor').collection('tutors')
     const bookingsCollection = client.db('bookingsTutor').collection('bookings')
-
-
 
 
     app.get('/tutors', verifyFirebaseToken, verifyTokenEmail, async (req, res) => {
@@ -84,8 +81,6 @@ async function run() {
       // if (email !== req.decoded.email){
       //   return res.status(403).send({message: 'Forbidden Access'})
       // }
-      
-
       
       const query = {};
       if (email) {
